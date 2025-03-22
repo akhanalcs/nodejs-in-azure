@@ -45,7 +45,7 @@ When you're done with your environment, you can run `azd down` to delete the res
 ```bash
 Ashishs-MacBook-Pro:todo-nodejs-mongo-swa-func ashishkhanal$ azd env get-values
 AZURE_ENV_NAME="dev"
-AZURE_SUBSCRIPTION_ID="8824a121-58be-47f3-b1cf-1ef308bacd6a"
+AZURE_SUBSCRIPTION_ID="1234hjui-899m-5648-ghs3-9jnegy7p6hn3"
 ```
 Values in `.azure/dev/.env` file.
 
