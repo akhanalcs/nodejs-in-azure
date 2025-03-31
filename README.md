@@ -9,13 +9,14 @@ Azure Functions is a serverless solution that allows you to write less code, mai
 Functions provides a comprehensive set of **event-driven triggers and bindings** that connect your functions to other services 
 without having to write extra code.
 
-## Check out sample apps (JS)
+## Developer guide:  
+https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference?tabs=blob&toc=%2Fazure%2Fdeveloper%2Fjavascript%2Ftoc.json&bc=%2Fazure%2Fdeveloper%2Fjavascript%2Fbreadcrumb%2Ftoc.json&pivots=programming-language-javascript
+
+## Check out sample apps
 Common Scenarios:  
 https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-javascript
 
-Developer guide:  
-https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference?tabs=blob&toc=%2Fazure%2Fdeveloper%2Fjavascript%2Ftoc.json&bc=%2Fazure%2Fdeveloper%2Fjavascript%2Fbreadcrumb%2Ftoc.json&pivots=programming-language-javascript
-
+### JS apps
 Flex consumption samples:  
 https://learn.microsoft.com/en-us/samples/azure-samples/azure-functions-flex-consumption-samples/azure-functions-flex-consumption-samples/
 
@@ -34,14 +35,11 @@ https://learn.microsoft.com/en-us/samples/azure/azure-sdk-for-js/storage-file-da
 Azure TypeScript apps:  
 https://learn.microsoft.com/en-us/samples/azure-samples/azure-typescript-e2e-apps/azure-typescript-e2e-apps/
 
-## Check out sample apps (C#)
+### C# apps
 https://github.com/Azure-Samples/functions-quickstart-dotnet-azd
 
-### How to deploy
-https://github.com/Azure-Samples/functions-quickstart-dotnet-azd
-
-The main.bicep template defines the infrastructure for an Azure Functions app with the following components:
-
+#### How to deploy
+The `main.bicep` template defines the infrastructure for an Azure Functions app with the following components:
 - Resource Group
 - Azure Functions App (isolated .NET 8 runtime)
 - Storage Account (required for Functions)
@@ -52,7 +50,7 @@ The main.bicep template defines the infrastructure for an Azure Functions app wi
 
 ## Azure Functions Deployment Best Practices
 
-### Storage Account Role
+### Storage Account Role - AI generated
 Storage accounts are essential for Azure Functions as they store:
 - Function code and deployment packages
 - Function execution logs
@@ -60,9 +58,7 @@ Storage accounts are essential for Azure Functions as they store:
 
 This template creates a storage account and assigns appropriate permissions using managed identities.
 
-## Azure Functions Deployment Architecture and Best Practices
-
-### Virtual Network with Private Endpoints Explained
+### Virtual Network with Private Endpoints Explained - AI generated
 Private endpoints create a private IP address for Azure services (like Storage) within your VNet, providing:
 - Network isolation from public internet
 - Protection from data exfiltration risks
@@ -71,9 +67,9 @@ Private endpoints create a private IP address for Azure services (like Storage) 
 
 In this template (lines 117-138), when `skipVnet=false`, storage accounts are configured with private endpoints and public network access is disabled.
 
-## Multi-Stage Deployment with Azure DevOps
+### Multi-Stage Deployment with Azure DevOps
+Pipeline Structure Example
 
-### Pipeline Structure Example
 ```yaml
 trigger:
   branches:
@@ -186,9 +182,8 @@ appSettings: {
 }
 ```
 
-## Environment Selection in CI/CD
-Your approach with approvals between environments is correct. In Azure DevOps:
-
+### Environment Selection in CI/CD - AI generated
+In Azure DevOps:
 1. The pipeline builds once, creating an artifact containing your function code
 2. Environment variables in each stage inject appropriate settings
 3. Approvals are configured in the Azure DevOps environment settings
@@ -197,15 +192,13 @@ Your approach with approvals between environments is correct. In Azure DevOps:
    resourceGroupName: 'rg-function-${environmentName}'
    ```
 
-## Deployment Slots for Zero-Downtime
+### Deployment Slots for Zero-Downtime
 Azure Functions Premium plan supports deployment slots. The process works like:
-
 1. Deploy new version to staging slot
 2. Run automated tests against staging slot
 3. When verified, swap slots (production <-> staging)
 
 In the pipeline:
-
 ```yaml
 - task: AzureFunctionAppSlot@1
   inputs:
@@ -227,3 +220,5 @@ In the pipeline:
 ```
 
 Note: For Consumption plan, you'd need to implement blue-green deployment with separate function apps instead of slots.
+
+
