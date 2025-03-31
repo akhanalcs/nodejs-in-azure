@@ -34,8 +34,6 @@ https://learn.microsoft.com/en-us/samples/azure/azure-sdk-for-js/storage-file-da
 Azure TypeScript apps:  
 https://learn.microsoft.com/en-us/samples/azure-samples/azure-typescript-e2e-apps/azure-typescript-e2e-apps/
 
-
-
 ## Check out sample apps (C#)
 https://github.com/Azure-Samples/functions-quickstart-dotnet-azd
 
@@ -55,7 +53,6 @@ The main.bicep template defines the infrastructure for an Azure Functions app wi
 ## Azure Functions Deployment Best Practices
 
 ### Storage Account Role
-
 Storage accounts are essential for Azure Functions as they store:
 - Function code and deployment packages
 - Function execution logs
@@ -63,12 +60,10 @@ Storage accounts are essential for Azure Functions as they store:
 
 This template creates a storage account and assigns appropriate permissions using managed identities.
 
-# Azure Functions Deployment Architecture and Best Practices
+## Azure Functions Deployment Architecture and Best Practices
 
-## Virtual Network with Private Endpoints Explained
-
+### Virtual Network with Private Endpoints Explained
 Private endpoints create a private IP address for Azure services (like Storage) within your VNet, providing:
-
 - Network isolation from public internet
 - Protection from data exfiltration risks
 - Compliance with security requirements
@@ -79,7 +74,6 @@ In this template (lines 117-138), when `skipVnet=false`, storage accounts are co
 ## Multi-Stage Deployment with Azure DevOps
 
 ### Pipeline Structure Example
-
 ```yaml
 trigger:
   branches:
@@ -171,9 +165,7 @@ stages:
 ```
 
 ### Key Vault Integration
-
 Add this module to the Bicep template:
-
 ```bicep
 module keyVault './core/security/keyvault.bicep' = {
   name: 'keyVault'
@@ -195,7 +187,6 @@ appSettings: {
 ```
 
 ## Environment Selection in CI/CD
-
 Your approach with approvals between environments is correct. In Azure DevOps:
 
 1. The pipeline builds once, creating an artifact containing your function code
@@ -207,7 +198,6 @@ Your approach with approvals between environments is correct. In Azure DevOps:
    ```
 
 ## Deployment Slots for Zero-Downtime
-
 Azure Functions Premium plan supports deployment slots. The process works like:
 
 1. Deploy new version to staging slot
@@ -237,72 +227,3 @@ In the pipeline:
 ```
 
 Note: For Consumption plan, you'd need to implement blue-green deployment with separate function apps instead of slots.
-
-## azd
-
-
-### Commands
-#### azd env new <env-name>
-After this you can then run `azd up` and it will provision to the subscription of your choice, and you have
-a sandbox environment ready to go.
-
-In `azd`, the environment is used to maintain a unique deployment context for your app.
-
-#### azd up
-Does packaging, provisioning, and deployment.
-
-#### azd provision
-When you've made changes to your IaC, you can run `azd provision` to provision/update the resources in Azure.
-
-Preview using `azd provision preview`.
-
-#### azd deploy
-When you're making changes to your code, you can run `azd deploy` to update the code in Azure.
-It **packages** the code and **deploys** it to Azure. It doesn't go through the provisioning step.
-
-Sometimes it's just convenient to run `azd up`.
-
-#### azd env list
-```bash
-Ashishs-MacBook-Pro:todo-nodejs-mongo-swa-func ashishkhanal$ azd env list
-NAME      DEFAULT   LOCAL     REMOTE
-dev       true      true      false
-```
-
-#### azd down
-When you're done with your environment, you can run `azd down` to delete the resources in Azure.
-
-#### azd env get-values
-```bash
-Ashishs-MacBook-Pro:todo-nodejs-mongo-swa-func ashishkhanal$ azd env get-values
-AZURE_ENV_NAME="dev"
-AZURE_SUBSCRIPTION_ID="1234hjui-899m-5648-ghs3-9jnegy7p6hn3"
-```
-Values in `.azure/dev/.env` file.
-
-#### azd show
-```bash
-Ashishs-MacBook-Pro:todo-nodejs-mongo-swa-func ashishkhanal$ azd show
-
-Showing services and environments for apps in this directory.
-To view a different environment, run azd show -e <environment name>
-
-todo-nodejs-mongo-swa-func
-  Services:
-    web  
-    api  
-  Environments:
-    dev [Current]
-  View in Azure Portal:
-    Application is not yet provisioned. Run azd provision or azd up first.
-```
-
-### CI/CD pipeline using azd
-Simple pipeline:
-https://github.com/Azure-Samples/todo-nodejs-mongo-swa-func/blob/main/azure.yaml
-
-It just does `provision` (provision infrastructure) and `deploy` (package and deploy).
-
-But if we're doing multi-stage pipeline, we'll run `azd package` in our build pipeline, we upload/save that as
-an artifact, and then in the release pipeline, we'll download that artifact and deploy that to dev,
-staging, and production.
