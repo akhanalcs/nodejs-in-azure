@@ -45,6 +45,43 @@ https://maxrozen.com/examples-of-large-production-grade-open-source-react-apps
 ## Install NodeJS using nvm
 https://nodejs.org/en/download
 
+or use this guide:  
+https://heynode.com/tutorial/install-nodejs-locally-nvm/
+
+or check out their GitHub page:  
+https://github.com/nvm-sh/nvm
+
+Your shell profile should have the following lines:
+```
+# Define "NVM_DIR" environment variable with "export" to define where nvm is installed
+# -s likely means size, so second line below checks if nvm.sh file exists and is not empty. 
+# If yes, the "."(source) command loads it to initialize nvm functionality in the current shell session.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+```
+
+After installation, tell `nvm` to use the latest version of Node.js to use when you start a new shell session 
+so that you don't have to manually set it every time you restart your computer.
+```bash
+# Got below info by running `nvm` on terminal
+# Always default to the latest available node version on a shell
+nvm alias default node
+
+# OR use latest LTS (Long Term Support) version - recommended for stability
+nvm alias default lts/*
+```
+
+If you don't do above, you will have to run `nvm use node` or `nvm use lts/*` every time you start a new shell session.
+```bash
+$ nvm current
+none
+$ nvm use node
+Now using node v23.10.0 (npm v10.9.2)
+$ node -v
+v23.10.0
+```
+
 ## Intro
 A Node.js app runs in a single process, without creating a new thread for every request.
 Node.js provides a set of asynchronous I/O primitives in its standard library that prevent JavaScript code from blocking and generally,
