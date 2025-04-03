@@ -3,44 +3,43 @@ Learning NodeJS from the official page.
 
 https://nodejs.org/en/learn/getting-started/introduction-to-nodejs
 
-## Basics
-https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70 - Excellent
+## Community provided info
+### Basics
+Understand modern JS (must read):  
+https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70
 
+Understand event loop:  
+https://youtu.be/eiC58R16hb8?si=94cBiHOutInfFmU5
+
+REST APIs best practices reference:  
+https://petstore.swagger.io
+
+### Structuring Node apps and best practices
 https://alexkondov.com/tao-of-node/ - Looks great
 
 https://github.com/goldbergyoni/nodebestpractices
 
 https://github.com/goldbergyoni/nodejs-testing-best-practices
 
-for REST APIs best practices https://petstore.swagger.io
-
-## ORM
-Kysely as query builder, and Prisma for studio/schemas/migrations. Either use 👈this or MikroORM or Drizzle.
+### ORM
+Kysely as query builder, and Prisma for studio/schemas/migrations.  
+Either use this 👆or MikroORM or Drizzle ([community thinks it'll become like EF someday](https://github.com/drizzle-team/drizzle-orm/discussions/1339#discussioncomment-12694078)).
 
 Check out sample apps in the Prisma repo. It has Express app.
 
-Other options I saw:
-- MikroORM (popular). Reference: https://www.reddit.com/r/node/comments/198uugu/comment/kieokf1/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-- Drizzle (new kid in the block)
-- TypeORM (someone said it's a dead project)
+What I also saw:
+- MikroORM (popular). [Reference](https://www.reddit.com/r/node/comments/198uugu/comment/kieokf1/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button)
+- Drizzle (new kid in the block).
+- TypeORM (someone said it's a dead project).
+- Prisma (being criticized as not implementing true unit-of-work pattern that should be in ORMs and is just a query builder; I need to verify this. Someone experienced also said that it's better than TypeORM and Sequelize).
 
-Some comment:
-- I am a certified Oracle DBA and SQL expert, using raw SQL over 15 years, and I can tell that Prisma does the job. I already used TypeOrm and Sequelize and Prisma is better by far.
-- prisma is ORM only by name and marketing. It doesn't do Unit of Work, data mapping or anything like that. Is it a heavy implementation of a query builder? Sure. Query builder none the less
+I'd probably just use `ms/sql` package.
 
-## Sample apps
-Some suggestions are here in node best practices. For naming files, "user.controller.ts", "post.service.ts" is a nice way of naming.
-
-Actually, there are a lot of example repos around, you only need to pick your stack.
-If you want a monorepo with frontend, check tRPC and it has it's example app.
-If you want GraphQL, pick a graphql framework, and there will be example projects for it.
-If you like C#/Java there is Nest.js with examples.
-In case you're going to use Prisma there are example repos for it.
-Maybe you'd like to go serverless? Then it will be different.
-
-https://github.com/cypress-io/cypress-realworld-app
-
-https://maxrozen.com/examples-of-large-production-grade-open-source-react-apps
+### Sample apps
+- If you want a monorepo with frontend, check tRPC, and it has example apps.
+- If you like C#/Java there is Nest.js with examples.
+- In case you're going to use Prisma there are example repos for it.
+- Or check out: https://maxrozen.com/examples-of-large-production-grade-open-source-react-apps
 
 ## Install NodeJS using nvm
 https://nodejs.org/en/download
@@ -118,34 +117,36 @@ graph TD
   C -->|"Thread Pool<br>(Default: 4 threads)"| E["Blocking Operations<br>(File I/O, DNS Ops.)"]
 ```
 
-## Threads in Node
-- The **main event loop thread** (running your JS code) - This is the primary thread where all your JavaScript code executes.
-- The **Inspector communication thread** (handling messages to/from the debugger client) - When running Node with `--inspect`, communication with debugger clients happens on a dedicated thread to avoid blocking the main thread.
-- Threads in the **Libuv thread pool** (handling async I/O) - These handle potentially blocking I/O operations (file operations, network requests, etc.) so they don't block the main thread. Libuv manages the event loop on the main thread.
-- Potentially other **V8 helper threads** (for GC, JIT, etc.).
-- **Worker threads** (if you use the `worker_threads` module) - These are separate threads that can run JavaScript code in parallel to the main thread. They are useful for CPU-intensive tasks.
-  - Each worker thread has its own V8 instance and a libuv instance to manage event loop that comes with it.
-  - While each worker thread has its own independent libuv instance to manage its event loop, these instances all share the same libuv thread pool (which handles file I/O, DNS lookups, and some cryptographic operations). libuv thread pool is a process-wide resource.
-  - All libuv instances (from the main thread and all worker threads) share this single thread pool.
-  ```js
-  const { Worker } = require('worker_threads');
-  ```
-  - https://nodejs.org/api/worker_threads.html
+## Threads in Node - AI generated
+1. The **main event loop thread** (running your JS code) - Executes JavaScript and runs Libuv's event loop.
+   - Single thread alternating between:
+     - V8 JavaScript execution (call stack, heap).
+     - Libuv event loop (`uv_run()`) for I/O scheduling. Libuv manages the event loop on the main thread.
+     - More info: https://docs.libuv.org/en/v1.x/design.html
+2. The **Inspector communication thread** (handling messages to/from the debugger client) - When running Node with `--inspect`, communication with debugger clients happens on a dedicated thread to avoid blocking the main thread.
+   - Dedicated thread created by Node.js (not Libuv/V8).
+   - Not a `worker_thread`; internal to Node.js.
+3. Threads in the **Libuv thread pool** (handling async I/O)
+   - Tasks: File I/O, DNS, crypto.
+   - Shared across all threads (main + workers).
+   - Does not handle network I/O (uses OS non-blocking sockets).
+4. **V8 helper threads** (for V8 engine operations like GC, JIT, etc.).
+5. **Worker threads** (parallel JavaScript execution via `worker_threads` module)
+   - These are separate threads that can run JavaScript code in parallel to the main thread. They are useful for CPU-intensive tasks.
+   - Each worker thread has its own V8 instance and a libuv event loop.
+   - All libuv instances (from the main thread and all worker threads) share the same libuv thread pool (which handles file I/O, DNS lookups, and some cryptographic operations).
+   ```js
+   const { Worker } = require('worker_threads');
+   ```
+   - More info: https://nodejs.org/api/worker_threads.html
 
-### Concurrency example
+Async example:
 ```js
-fetch('some-url') // This code gets executed off the main thread and when it completes it goes back to main thread 👇
-.then(doSomethingLater) // and executes a callback: doSomethingLater
+fetch('some-url') // This code gets executed off the main thread by libuv on OS level async I/O and when it completes it goes back to main thread 👇 
+.then(doSomethingLater) // and executes a callback: doSomethingLater on the main thread
 ```
 
-
-
-## Install Node
-```bash
-$ node --version
-v20.18.0
-```
-## CJS vs MJS
+## CJS vs MJS - AI generated
 1. **CommonJS (CJS)**:
     - The original Node.js module format
     - Uses `require()` and `module.exports`
