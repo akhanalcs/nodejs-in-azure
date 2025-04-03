@@ -216,9 +216,9 @@ V8 is just the JavaScript execution engine (similar to the JIT compiler part of 
 runtime environment (like Node.js or a browser) includes V8 plus additional APIs and capabilities.
 
 <p>
-  <img alt="image" src="screenshots/js-big-picture.png" width="400">
+  <img alt="image" src="screenshots/js-big-picture.png" width="450">
 &nbsp;
-  <img alt="image" src="screenshots/js-runtime.png" width="500">
+  <img alt="image" src="screenshots/js-runtime.png" width="550">
 </p>
 
 ### Check v8 version that came with your NodeJS version
