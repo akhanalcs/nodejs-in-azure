@@ -117,7 +117,7 @@ graph TD
   C -->|"Thread Pool<br>(Default: 4 threads)"| E["Blocking Operations<br>(File I/O, DNS Ops.)"]
 ```
 
-## Threads in Node - AI generated
+## Threads in Node - AI generated with my edits
 1. The **main event loop thread** (running your JS code) - Executes JavaScript and runs Libuv's event loop.
    - Single thread alternating between:
      - V8 JavaScript execution (call stack, heap).
@@ -135,9 +135,9 @@ graph TD
    - These are separate threads that can run JavaScript code in parallel to the main thread. They are useful for CPU-intensive tasks.
    - Each worker thread has its own V8 instance and a libuv event loop.
    - All libuv instances (from the main thread and all worker threads) share the same libuv thread pool (which handles file I/O, DNS lookups, and some cryptographic operations).
-   ```js
-   const { Worker } = require('worker_threads');
-   ```
+     ```js
+     const { Worker } = require('worker_threads');
+     ```
    - More info: https://nodejs.org/api/worker_threads.html
 
 Async example:
@@ -216,9 +216,9 @@ V8 is just the JavaScript execution engine (similar to the JIT compiler part of 
 runtime environment (like Node.js or a browser) includes V8 plus additional APIs and capabilities.
 
 <p>
-  <img alt="image" src="screenshots/js-big-picture.png" width="350">
+  <img alt="image" src="screenshots/js-big-picture.png" width="400">
 &nbsp;
-  <img alt="image" src="screenshots/js-runtime.png" width="700">
+  <img alt="image" src="screenshots/js-runtime.png" width="500">
 </p>
 
 ### Check v8 version that came with your NodeJS version
