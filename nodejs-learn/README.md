@@ -103,6 +103,43 @@ Examples of these primitives include:
 
 This asynchronous approach is what enables Node.js to efficiently handle many concurrent operations with a single thread.
 
+## V8 and Event Loop
+- V8 is JS engine. It has stack and heap. It executes JS code.
+- NodeJS Event loop is inside Libuv not inside V8. Take a quick look: https://docs.libuv.org/en/v1.x/design.html
+- libuv uses a thread pool to make asynchronous file I/O operations possible, but network I/O is always performed in a single thread, each loop’s thread.
+- All (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and IOCP on Windows.
+
+AI generated diagram:
+```mermaid
+graph TD
+  A[JavaScript Code] --> B(V8 Engine)
+  B -->|"Calls APIs<br>(fs/net/timers)"| C[Libuv]
+  C -->|"Event Loop<br>(uv_run())"| D["OS-level Async I/O<br>(epoll/kqueue/IOCP)"]
+  C -->|"Thread Pool<br>(Default: 4 threads)"| E["Blocking Operations<br>(File I/O, DNS Ops.)"]
+```
+
+## Threads in Node
+- The **main event loop thread** (running your JS code) - This is the primary thread where all your JavaScript code executes.
+- The **Inspector communication thread** (handling messages to/from the debugger client) - When running Node with `--inspect`, communication with debugger clients happens on a dedicated thread to avoid blocking the main thread.
+- Threads in the **Libuv thread pool** (handling async I/O) - These handle potentially blocking I/O operations (file operations, network requests, etc.) so they don't block the main thread. Libuv manages the event loop on the main thread.
+- Potentially other **V8 helper threads** (for GC, JIT, etc.).
+- **Worker threads** (if you use the `worker_threads` module) - These are separate threads that can run JavaScript code in parallel to the main thread. They are useful for CPU-intensive tasks.
+  - Each worker thread has its own V8 instance and a libuv instance to manage event loop that comes with it.
+  - While each worker thread has its own independent libuv instance to manage its event loop, these instances all share the same libuv thread pool (which handles file I/O, DNS lookups, and some cryptographic operations). libuv thread pool is a process-wide resource.
+  - All libuv instances (from the main thread and all worker threads) share this single thread pool.
+  ```js
+  const { Worker } = require('worker_threads');
+  ```
+  - https://nodejs.org/api/worker_threads.html
+
+### Concurrency example
+```js
+fetch('some-url') // This code gets executed off the main thread and when it completes it goes back to main thread 👇
+.then(doSomethingLater) // and executes a callback: doSomethingLater
+```
+
+
+
 ## Install Node
 ```bash
 $ node --version
@@ -299,6 +336,10 @@ Inspector clients must know and specify host address, port, and UUID to connect.
 
 The port 9229 is only used for the debugging protocol connection, not for serving web content.
 It requires a debugging client that understands the Inspector Protocol.
+
+### Debugging using CLI
+https://nodejs.org/api/debugger.html
+
 
 ### Debugging using Chrome Devtools
 
