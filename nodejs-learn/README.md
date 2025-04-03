@@ -146,7 +146,7 @@ fetch('some-url') // This code gets executed off the main thread by libuv on OS 
 .then(doSomethingLater) // and executes a callback: doSomethingLater on the main thread
 ```
 
-## CJS vs MJS - AI generated
+## CJS vs ESM - AI generated
 1. **CommonJS (CJS)**:
     - The original Node.js module format
     - Uses `require()` and `module.exports`
@@ -157,17 +157,16 @@ fetch('some-url') // This code gets executed off the main thread by libuv on OS 
       const { createServer } = require('node:http');
       ```
 
-2. **ES Modules (MJS)**:
+2. **ES Modules (ESM)**:
     - Modern JavaScript module system (ECMAScript standard). "M" stands for "Module". "JS" stands for JavaScript.
     - Uses `import` and `export` syntax
-    - Files use `.mjs` extension, or `.js` with `"type": "module"` in `package.json`. Or in TypeScript `tsconfig.json`, use `"module": "ESNext"`.
+    - Files use `.mjs` extension, or `.js` with `"type": "module"` in `package.json`. In TypeScript projects, set `"module": "NodeNext"` in `tsconfig.json` and still use either `.mjs` extension or `"type": "module"` in package.json.
     - Example:
       ```javascript
       import { createServer } from 'node:http';
       ```
 
-The `.mjs` file extension was introduced as a clear way to identify files using ES Module syntax, as opposed to traditional
-CommonJS (`.js` or `.cjs`).
+The `.mjs` file extension was introduced as a clear way to identify files using ES Module syntax, as opposed to traditional CommonJS (`.js` or `.cjs`).
 
 This distinction was necessary because Node.js originally only supported CommonJS, and when ES Modules support was added,
 there needed to be a way to tell them apart without breaking existing code. The extension provides an explicit signal to
@@ -176,7 +175,7 @@ Node.js about which module system to use when interpreting the file.
 You can also use `.js` files for ES Modules by setting `"type": "module"` in your package.json file.
 Node.js treats all `.js` files as CommonJS by default when there's no `"type": "module"` in package.json.
 
-### Which is better (ESM vs CJS)?
+### Which is better (ESM vs CJS)? - AI generated
 **ES Modules (ESM) advantages:**
 - Modern JavaScript standard
 - Static analysis (better tree-shaking)
@@ -215,6 +214,12 @@ The cool thing is that the JavaScript engine (V8) is independent of the browser 
 
 V8 is just the JavaScript execution engine (similar to the JIT compiler part of CLR), while a complete
 runtime environment (like Node.js or a browser) includes V8 plus additional APIs and capabilities.
+
+<p>
+  <img alt="image" src="screenshots/js-big-picture.png" width="350">
+&nbsp;
+  <img alt="image" src="screenshots/js-runtime.png" width="700">
+</p>
 
 ### Check v8 version that came with your NodeJS version
 ```bash
