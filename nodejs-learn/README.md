@@ -9,6 +9,8 @@ Understand modern JS (must read):
 https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70
 
 Understand event loop:  
+https://www.lydiahallie.com/blog/event-loop (excellent)
+
 https://youtu.be/eiC58R16hb8?si=94cBiHOutInfFmU5
 
 REST APIs best practices reference:  
@@ -126,6 +128,7 @@ graph TD
 2. The **Inspector communication thread** (handling messages to/from the debugger client) - When running Node with `--inspect`, communication with debugger clients happens on a dedicated thread to avoid blocking the main thread.
    - Dedicated thread created by Node.js (not Libuv/V8).
    - Not a `worker_thread`; internal to Node.js.
+   - V8 provides the [Inspector Protocol (debugging API)](https://v8.dev/docs/inspector), but Node.js manages the actual communication thread (WebSocket server for debugger clients).
 3. Threads in the **Libuv thread pool** (handling async I/O)
    - Tasks: File I/O, DNS, crypto.
    - Shared across all threads (main + workers).
@@ -145,6 +148,8 @@ Async example:
 fetch('some-url') // This code gets executed off the main thread by libuv on OS level async I/O and when it completes it goes back to main thread 👇 
 .then(doSomethingLater) // and executes a callback: doSomethingLater on the main thread
 ```
+
+https://blog.logrocket.com/complete-guide-threads-node-js/
 
 ## CJS vs ESM - AI generated
 1. **CommonJS (CJS)**:
@@ -346,12 +351,20 @@ It requires a debugging client that understands the Inspector Protocol.
 ### Debugging using CLI
 https://nodejs.org/api/debugger.html
 
+https://www.youtube.com/watch?v=FMsNsSHhRC8&list=PL2uN9BViQt2yzYm8gUzXhOef8YHfPwLC_&index=7&t=3s (good video)
+
+Follow along this video: https://youtu.be/si9pVRaGz30?si=-NLQIuOwg1Y3hy8y (Node Doesn't Suck Anymore)
+
+https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/deployment
+
+https://hromium.com/javascript-visualized-event-loop
 
 ### Debugging using Chrome Devtools
+https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27
 
 For eg:
 ```bash
-Ashishs-MacBook-Pro:nodejs ashishkhanal$ node --inspect server.js
+Ashishs-MacBook-Pro:nodejs ashishkhanal$ node inspect server.js
 < Debugger listening on ws://127.0.0.1:9229/db17522c-ec72-464f-babe-f28c684e1bbd
 < For help, see: https://nodejs.org/en/docs/inspector
 < 
