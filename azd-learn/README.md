@@ -1,6 +1,11 @@
 # azd
 Reference: https://youtu.be/OD0_nP9QB6g?si=Qoz7YVSJR2xsjDhC
 
+Official docs: https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-mac
+
+TODO: Move azd stuffs to "iac-on-azure" repo.
+Currently, it's also on "react-aspnetcore-bff" repo, so it's scattered and messy.
+
 ## Commands
 ### azd env new <env-name>
 After this you can then run `azd up` and it will provision to the subscription of your choice, and you have
