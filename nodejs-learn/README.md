@@ -43,6 +43,36 @@ I'd probably just use `ms/sql` package.
 - In case you're going to use Prisma there are example repos for it.
 - Or check out: https://maxrozen.com/examples-of-large-production-grade-open-source-react-apps
 
+### Node Issues and Solutions (TODO: Need to be cleaned up)
+#### Issue by c-digs (the guys who created excellent .NET modular monolith example)
+https://www.reddit.com/r/webdev/comments/1kph8b2/comment/msxs3og/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+#### Solution from c-digs
+[Nestia + Typia + Kysely](https://docs.google.com/presentation/d/1fToIKvR7dyvQS1AAtp4YuSwN6qi2kj_GBoIEJioWyTM/edit?usp=sharing)
+
+https://www.reddit.com/r/webdev/comments/1kph8b2/comment/msztgty/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+#### Solution from 30thnight
+This is a great response.
+
+For addressing some of the warts listed:
+
+node supports typescript type stripping now - which can be used to reduce your tooling requirements (or just use bun/deno)
+
+modern validation libraries adhere to the standard spec and can be used interchangeably. This is useful because modern api servers like hono.js support automatic openapi codegen from your validation schemas like this (Arktype and Zod v4 are great options)
+
+in cases where performance is your primary concern, consider your validation library to Typia (the fastest feature complete system I know that doesn’t require writing validation schemas and supports its own openapi spec generation - benchmark
+
+use a monorepo structure with NX to share types across domains / packages.
+
+for small apis that only have a single JS based consumer, consider using tools like orpc or trpc.
+
+for sql orms, very little can compete with EF core but for what we’re talking about - I highly recommend using Drizzle.
+
+for package security, many companies I’ve been at used snky.io for dependency checks. Others would mirror packages in our internal setup (GitHub packages or Artifactory). In 2025, I’d advise people to avoid packages that don’t publish provenance data and use checks like this: https://github.com/actions/dependency-review-action
+
+asp.net, golang, and elixir are my choices for most usecases but I personally would choose typescript before ruby or python for general crud work.
+
 ## Install NodeJS using nvm
 https://nodejs.org/en/download
 
